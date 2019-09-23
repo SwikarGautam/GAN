@@ -39,7 +39,7 @@ Generator = ConvoNet((100, 1, 1), NoLoss())
 Generator.add(Dense(100, 256, LeakyReLu(0.2), batch_norm_momentum=0.8))
 Generator.add(Dense(256, 512, LeakyReLu(0.2),batch_norm_momentum=0.8))
 Generator.add(Dense(512, 1024, LeakyReLu(0.2),batch_norm_momentum=0.8))
-Generator.add(Dense(1024, 784, Tanh()))
+Generator.add(Dense(1024, 784, Sigmoid()))
 
 Generator.set_adam_parameters(0.5, 0.9)
 Discriminator.set_adam_parameters(0.5, 0.9)
@@ -78,13 +78,14 @@ mini_batch_size = 256
 
 lr1 = 0.0015
 lr2 = 0.003
-for j in range(1):
-    
+for j in range(100):
+
+    if lr2 > 0.0001:
+        lr2 *= 0.98
+    if lr1 > 0.0001:
+        lr1 *= 0.98
     for i in range(0, 70000, mini_batch_size):
-        if lr2 > 0.001:
-            lr2 *= 0.9985
-        if lr1 > 0.0005:
-            lr1*=0.9985
+        
         noise = np.random.randn(256, 100)
 
         train_GAN(x_train[i:i+256], noise, 256, lr1, lr2)
